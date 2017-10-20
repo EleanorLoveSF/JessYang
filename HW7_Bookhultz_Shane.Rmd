@@ -1,0 +1,72 @@
+---
+title: "HW7 Shane Bookhultz"
+output: html_notebook
+---
+
+## Libraries used
+
+```{r echo = T, warning=FALSE}
+library(foreach, warning(F))
+```
+
+
+
+## Problem 2
+
+-Calculate sums of squares using...
+
+```{r echo = F}
+
+# Generating the data for problem 2
+
+set.seed(12345)
+y <- rnorm(n = 1e+07, mean = 1, sd = 1)
+
+```
+
+a. For loop
+
+```{r echo = F}
+#2a calculating sums of squares using a for loop, calculating the summed squared difference between data points and the mean of the data
+
+meany <- mean(y)
+
+SSvec <- vector()
+
+system.time({for(i in 1:length(y)){
+  SSvec[i] <- (y[i] - meany)^2
+}
+  Sum1 <- sum(SSvec)
+})
+
+# time for user is 3.66, system is 0.52, and elapsed is 4.32
+
+```
+
+b. Vector operations
+
+```{r echo = F}
+#2b Using vector operations to do the same computation
+
+SSvec2 <- vector()
+
+system.time({SSvec2 <- sum((y-meany)^2)})
+
+# User is 0.05, system is 0.00, elapsed is 0.05
+
+```
+
+c. dopar
+
+```{r echo = F}
+#2c Use dopar to calculate sums of squares
+
+system.time({
+  ParSum <- foreach(j = 1:length(y), .combine ="+") %dopar% {
+    sum((y[j]-meany)^2)
+  }
+})
+
+
+```
+d. parSapply
