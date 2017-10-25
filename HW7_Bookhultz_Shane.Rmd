@@ -225,7 +225,7 @@ t6 <- system.time({Boottime <- foreach(b = 1:B, .combine = "rbind") %dorng% {
   return (bootbeta <- coef(lm(booty~bootx)))
 }
 })
-
+ 
 stopCluster(cl)
 
 # since considering beta1, use index 2
@@ -234,9 +234,42 @@ stopCluster(cl)
 
 # I did Booty ~ 0 + bootX in order to remove the list of 1's
 
+
 ```
 
-a. I used the base package of R to generate my random data
+a. I used the base package of R to generate my random data. I used the parallelization method of DoRNG. This is needed because each time the for loop is ran, a different sample is run, and normal seeds do not work with parallel loops, so the dorng statement must be used for reproducibility. I encounter a full 2 hour straight impediment of having an extra parentheses around the iteration step in the foreach loop, which I later deleted. This one reduction in parentheses allowed me to fully run the foreach loop. This process took me 9.27 seconds overall. 
+
+b. 
+
+```{r echo = F}
+
+#4b creating a summary table of the betas
+
+# I will get the mean of the beta's, the variance in the betas and the min and max
+
+meanbetas <- apply(Boottime, 2, mean)
+minbetas <- apply(Boottime, 2, min)
+maxbetas <- apply(Boottime, 2, max)
+varbetas <- apply(Boottime, 2, var)
+
+sumtable <- cbind(minbetas, maxbetas, meanbetas, varbetas)
+
+kable(sumtable)
+```
+
+c. Create histograms of the Betas (Will only use the intercept and bootx2-4, since bootx1 is just all NA's.)
+
+```{r echo = F}
+
+#4c creating histograms of the betas
+
+#par(mfrow = c(2,2))
+hist(Boottime[,1], main = "Intercept Beta", xlab = "Intercept")
+hist(Boottime[,3], main = "Beta2", xlab = "Beta2")
+hist(Boottime[,4], main = "Beta3", xlab = "Beta3")
+hist(Boottime[,5], main = "Beta4", xlab = "Beta4")
+
+```
 
 ## Appendix
 
