@@ -176,14 +176,10 @@ $(document).ready(function () {
 <h2>Libraries used</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShmb3JlYWNoKVxuYGBgIn0= -->
-<pre class="r"><code>library(foreach)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShmb3JlYWNoLCB3YXJuaW5nKEYpKVxubGlicmFyeShkb1BhcmFsbGVsLCB3YXJuaW5nKEYpKVxuYGBgIn0= -->
+<pre class="r"><code>library(foreach, warning(F))
+library(doParallel, warning(F))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZm9yZWFjaDogc2ltcGxlLCBzY2FsYWJsZSBwYXJhbGxlbCBwcm9ncmFtbWluZyBmcm9tIFJldm9sdXRpb24gQW5hbHl0aWNzXG5Vc2UgUmV2b2x1dGlvbiBSIGZvciBzY2FsYWJpbGl0eSwgZmF1bHQgdG9sZXJhbmNlIGFuZCBtb3JlLlxuaHR0cDovL3d3dy5yZXZvbHV0aW9uYW5hbHl0aWNzLmNvbVxuIn0= -->
-<pre><code>foreach: simple, scalable parallel programming from Revolution Analytics
-Use Revolution R for scalability, fault tolerance and more.
-http://www.revolutionanalytics.com</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -199,9 +195,9 @@ http://www.revolutionanalytics.com</code></pre>
 </ol>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgdXNlciAgc3lzdGVtIGVsYXBzZWQgXG4gICAzLjY2ICAgIDAuNTIgICAgNC4zMiBcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgdXNlciAgc3lzdGVtIGVsYXBzZWQgXG4gICAwLjYzICAgIDAuMDAgICAgMC42NiBcbiJ9 -->
 <pre><code>   user  system elapsed 
-   3.66    0.52    4.32 </code></pre>
+   0.63    0.00    0.66 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -210,9 +206,9 @@ http://www.revolutionanalytics.com</code></pre>
 </ol>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgdXNlciAgc3lzdGVtIGVsYXBzZWQgXG4gICAwLjA1ICAgIDAuMDAgICAgMC4wNSBcbiJ9 -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgdXNlciAgc3lzdGVtIGVsYXBzZWQgXG4gICAwLjA0ICAgIDAuMDEgICAgMC4wNyBcbiJ9 -->
 <pre><code>   user  system elapsed 
-   0.05    0.00    0.05 </code></pre>
+   0.04    0.01    0.07 </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -221,11 +217,8 @@ http://www.revolutionanalytics.com</code></pre>
 </ol>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-output-begin eyJkYXRhIjoiZXhlY3V0aW5nICVkb3BhciUgc2VxdWVudGlhbGx5OiBubyBwYXJhbGxlbCBiYWNrZW5kIHJlZ2lzdGVyZWRcbiJ9 -->
-<pre><code>executing %dopar% sequentially: no parallel backend registered</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGltaW5nIHN0b3BwZWQgYXQ6IDE3LjM1IDAuMDIgMTcuNjlcbiJ9 -->
-<pre><code>Timing stopped at: 17.35 0.02 17.69</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiVGltaW5nIHN0b3BwZWQgYXQ6IDU1Ljg0IDAuMDkgNTYuMTVcbiJ9 -->
+<pre><code>Timing stopped at: 55.84 0.09 56.15</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -233,9 +226,16 @@ http://www.revolutionanalytics.com</code></pre>
 <li>parSapply</li>
 </ol>
 <!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<ol start="3" style="list-style-type: decimal">
+<li></li>
+</ol>
+<!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkhXNyBTaGFuZSBCb29raHVsdHoiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIyBMaWJyYXJpZXMgdXNlZA0KDQpgYGB7ciBlY2hvID0gVCwgd2FybmluZz1GQUxTRX0NCmxpYnJhcnkoZm9yZWFjaCwgd2FybmluZyhGKSkNCmBgYA0KDQoNCg0KIyMgUHJvYmxlbSAyDQoNCi1DYWxjdWxhdGUgc3VtcyBvZiBzcXVhcmVzIHVzaW5nLi4uDQoNCmBgYHtyIGVjaG8gPSBGfQ0KDQojIEdlbmVyYXRpbmcgdGhlIGRhdGEgZm9yIHByb2JsZW0gMg0KDQpzZXQuc2VlZCgxMjM0NSkNCnkgPC0gcm5vcm0obiA9IDFlKzA3LCBtZWFuID0gMSwgc2QgPSAxKQ0KDQpgYGANCg0KYS4gRm9yIGxvb3ANCg0KYGBge3IgZWNobyA9IEZ9DQojMmEgY2FsY3VsYXRpbmcgc3VtcyBvZiBzcXVhcmVzIHVzaW5nIGEgZm9yIGxvb3AsIGNhbGN1bGF0aW5nIHRoZSBzdW1tZWQgc3F1YXJlZCBkaWZmZXJlbmNlIGJldHdlZW4gZGF0YSBwb2ludHMgYW5kIHRoZSBtZWFuIG9mIHRoZSBkYXRhDQoNCm1lYW55IDwtIG1lYW4oeSkNCg0KU1N2ZWMgPC0gdmVjdG9yKCkNCg0Kc3lzdGVtLnRpbWUoe2ZvcihpIGluIDE6bGVuZ3RoKHkpKXsNCiAgU1N2ZWNbaV0gPC0gKHlbaV0gLSBtZWFueSleMg0KfQ0KICBTdW0xIDwtIHN1bShTU3ZlYykNCn0pDQoNCiMgdGltZSBmb3IgdXNlciBpcyAzLjY2LCBzeXN0ZW0gaXMgMC41MiwgYW5kIGVsYXBzZWQgaXMgNC4zMg0KDQpgYGANCg0KYi4gVmVjdG9yIG9wZXJhdGlvbnMNCg0KYGBge3IgZWNobyA9IEZ9DQojMmIgVXNpbmcgdmVjdG9yIG9wZXJhdGlvbnMgdG8gZG8gdGhlIHNhbWUgY29tcHV0YXRpb24NCg0KU1N2ZWMyIDwtIHZlY3RvcigpDQoNCnN5c3RlbS50aW1lKHtTU3ZlYzIgPC0gc3VtKCh5LW1lYW55KV4yKX0pDQoNCiMgVXNlciBpcyAwLjA1LCBzeXN0ZW0gaXMgMC4wMCwgZWxhcHNlZCBpcyAwLjA1DQoNCmBgYA0KDQpjLiBkb3Bhcg0KDQpgYGB7ciBlY2hvID0gRn0NCiMyYyBVc2UgZG9wYXIgdG8gY2FsY3VsYXRlIHN1bXMgb2Ygc3F1YXJlcw0KDQpzeXN0ZW0udGltZSh7DQogIFBhclN1bSA8LSBmb3JlYWNoKGogPSAxOmxlbmd0aCh5KSwgLmNvbWJpbmUgPSIrIikgJWRvcGFyJSB7DQogICAgc3VtKCh5W2pdLW1lYW55KV4yKQ0KICB9DQp9KQ0KDQoNCmBgYA0KZC4gcGFyU2FwcGx5DQo=</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkhXNyBTaGFuZSBCb29raHVsdHoiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIyBMaWJyYXJpZXMgdXNlZA0KDQpgYGB7ciBlY2hvID0gVCwgd2FybmluZz1GQUxTRX0NCmxpYnJhcnkoZm9yZWFjaCwgd2FybmluZyhGKSkNCmxpYnJhcnkoZG9QYXJhbGxlbCwgd2FybmluZyhGKSkNCmBgYA0KDQoNCg0KIyMgUHJvYmxlbSAyDQoNCi1DYWxjdWxhdGUgc3VtcyBvZiBzcXVhcmVzIHVzaW5nLi4uDQoNCmBgYHtyIGVjaG8gPSBGfQ0KDQojIEdlbmVyYXRpbmcgdGhlIGRhdGEgZm9yIHByb2JsZW0gMg0KDQpzZXQuc2VlZCgxMjM0NSkNCnkgPC0gcm5vcm0obiA9IDFlKzA3LCBtZWFuID0gMSwgc2QgPSAxKQ0KDQpgYGANCg0KYS4gRm9yIGxvb3ANCg0KYGBge3IgZWNobyA9IEZ9DQojMmEgY2FsY3VsYXRpbmcgc3VtcyBvZiBzcXVhcmVzIHVzaW5nIGEgZm9yIGxvb3AsIGNhbGN1bGF0aW5nIHRoZSBzdW1tZWQgc3F1YXJlZCBkaWZmZXJlbmNlIGJldHdlZW4gZGF0YSBwb2ludHMgYW5kIHRoZSBtZWFuIG9mIHRoZSBkYXRhDQoNCm1lYW55IDwtIG1lYW4oeSkNCg0KU1N2YWwgPC0gMA0KDQpzeXN0ZW0udGltZSh7Zm9yKGkgaW4gMTpsZW5ndGgoeSkpew0KICBTU3ZhbCA8LSBTU3ZhbCArICh5W2ldIC0gbWVhbnkpXjINCn0NCn0pDQoNCiMgdGltZSBmb3IgdXNlciBpcyAzLjY2LCBzeXN0ZW0gaXMgMC41MiwgYW5kIGVsYXBzZWQgaXMgNC4zMg0KDQpgYGANCg0KYi4gVmVjdG9yIG9wZXJhdGlvbnMNCg0KYGBge3IgZWNobyA9IEZ9DQojMmIgVXNpbmcgdmVjdG9yIG9wZXJhdGlvbnMgdG8gZG8gdGhlIHNhbWUgY29tcHV0YXRpb24NCg0KU1N2ZWMyIDwtIHZlY3RvcigpDQoNCnN5c3RlbS50aW1lKHtTU3ZlYzIgPC0gc3VtKCh5LW1lYW55KV4yKX0pDQoNCiMgVXNlciBpcyAwLjA1LCBzeXN0ZW0gaXMgMC4wMCwgZWxhcHNlZCBpcyAwLjA1DQoNCmBgYA0KDQpjLiBkb3Bhcg0KDQpgYGB7ciBlY2hvID0gRn0NCiMyYyBVc2UgZG9wYXIgdG8gY2FsY3VsYXRlIHN1bXMgb2Ygc3F1YXJlcw0KDQojZGV0ZWN0Q29yZXMoKQ0KIyBJIGhhdmUgNCBjb3Jlcw0KDQpjbCA8LSBtYWtlQ2x1c3RlcigxKQ0KcmVnaXN0ZXJEb1BhcmFsbGVsKGNsKQ0KDQpzeXN0ZW0udGltZSh7DQogIFBhclN1bSA8LSBmb3JlYWNoKGogPSAxOmxlbmd0aCh5KSwgLmNvbWJpbmUgPSIrIikgJWRvcGFyJSB7DQogICAgc3VtKCh5W2pdLW1lYW55KV4yKQ0KICB9DQp9KQ0KDQpzdG9wSW1wbGljaXRDbHVzdGVyKCkNCnN0b3BDbHVzdGVyKGNsKQ0KDQpgYGANCg0KZC4gcGFyU2FwcGx5DQoNCmBgYHtyIGVjaG8gPSBGfQ0KIzJkIA0KDQpzdW1zdmVjIDwtIHZlY3RvcigpDQoNClNTIDwtIGZ1bmN0aW9uIChtKSB7DQogIGZvcihrIGluIDE6bGVuZ3RoKG0pKSB7DQogICAgc3Vtc3ZlY1trXSA8LSAobVtrXS1tZWFuKG0pKV4yDQogIH0NCiAgcmV0dXJuIChzdW1zdmVjKQ0KfSANCg0KY2wgPC0gbWFrZUNsdXN0ZXIoMykNCmNsdXN0ZXJFeHBvcnQoY2wsICJTUyIpDQoNCnN5c3RlbS50aW1lKHsNCiAgU2FwU3VtIDwtIHBhclNhcHBseShjbCwgMTpsZW5ndGgoeSksIGZ1bmN0aW9uKHkpIFNTKQ0KfSkNCg0Kc3RvcENsdXN0ZXIoY2wpDQoNCmBgYA0KDQozLiA=</div>
 
 
 

@@ -7,6 +7,7 @@ output: html_notebook
 
 ```{r echo = T, warning=FALSE}
 library(foreach, warning(F))
+library(doParallel, warning(F))
 ```
 
 
@@ -31,12 +32,11 @@ a. For loop
 
 meany <- mean(y)
 
-SSvec <- vector()
+SSval <- 0
 
 system.time({for(i in 1:length(y)){
-  SSvec[i] <- (y[i] - meany)^2
+  SSval <- SSval + (y[i] - meany)^2
 }
-  Sum1 <- sum(SSvec)
 })
 
 # time for user is 3.66, system is 0.52, and elapsed is 4.32
@@ -61,12 +61,46 @@ c. dopar
 ```{r echo = F}
 #2c Use dopar to calculate sums of squares
 
+#detectCores()
+# I have 4 cores
+
+cl <- makeCluster(1)
+registerDoParallel(cl)
+
 system.time({
   ParSum <- foreach(j = 1:length(y), .combine ="+") %dopar% {
     sum((y[j]-meany)^2)
   }
 })
 
+stopImplicitCluster()
+stopCluster(cl)
 
 ```
+
 d. parSapply
+
+```{r echo = F}
+#2d 
+
+sumsvec <- vector()
+
+SS <- function (m) {
+  for(k in 1:length(m)) {
+    sumsvec[k] <- (m[k]-mean(m))^2
+  }
+  return (sumsvec)
+} 
+
+cl <- makeCluster(3)
+clusterExport(cl, "SS")
+
+system.time({
+  SapSum <- parSapply(cl, 1:length(y), function(y) SS)
+})
+
+stopCluster(cl)
+
+```
+
+3. 
