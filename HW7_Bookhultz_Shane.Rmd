@@ -5,9 +5,11 @@ output: html_notebook
 
 ## Libraries used
 
-```{r echo = T, warning=FALSE}
-library(foreach, warning(F))
-library(doParallel, warning(F))
+```{r echo = F, warning=FALSE}
+suppressWarnings(library(foreach, warning(F)))
+suppressWarnings(library(doParallel, warning(F)))
+suppressWarnings(library(knitr))
+suppressWarnings(library(doRNG))
 ```
 
 
@@ -21,7 +23,7 @@ library(doParallel, warning(F))
 # Generating the data for problem 2
 
 set.seed(12345)
-y <- rnorm(n = 1e+07, mean = 1, sd = 1)
+y <- rnorm(n = 10000, mean = 1, sd = 1)
 
 ```
 
@@ -30,13 +32,13 @@ a. For loop
 ```{r echo = F}
 #2a calculating sums of squares using a for loop, calculating the summed squared difference between data points and the mean of the data
 
-meany <- mean(y)
-
 SSval <- 0
 
-system.time({for(i in 1:length(y)){
-  SSval <- SSval + (y[i] - meany)^2
-}
+t1 <- system.time({
+  meany <- mean(y)
+  for(i in 1:length(y)){
+    SSval <- SSval + (y[i] - meany)^2
+  }
 })
 
 # time for user is 3.66, system is 0.52, and elapsed is 4.32
@@ -48,9 +50,12 @@ b. Vector operations
 ```{r echo = F}
 #2b Using vector operations to do the same computation
 
-SSvec2 <- vector()
+SSval2 <- 0
 
-system.time({SSvec2 <- sum((y-meany)^2)})
+t2 <- system.time({
+  meany <- mean(y)
+  SSval2 <- t(y-meany) %*% (y-meany)
+})
 
 # User is 0.05, system is 0.00, elapsed is 0.05
 
@@ -64,16 +69,15 @@ c. dopar
 #detectCores()
 # I have 4 cores
 
-cl <- makeCluster(1)
+cl <- makeCluster(3)
 registerDoParallel(cl)
 
-system.time({
+t3 <- system.time({
   ParSum <- foreach(j = 1:length(y), .combine ="+") %dopar% {
     sum((y[j]-meany)^2)
   }
 })
 
-stopImplicitCluster()
 stopCluster(cl)
 
 ```
@@ -83,24 +87,159 @@ d. parSapply
 ```{r echo = F}
 #2d 
 
+registerDoParallel(cl)
+cl <- makeCluster(3)
+
 sumsvec <- vector()
 
-SS <- function (m) {
-  for(k in 1:length(m)) {
-    sumsvec[k] <- (m[k]-mean(m))^2
-  }
-  return (sumsvec)
+SUM <- function (m) {
+  sums <- (m-mean(m))^2
+  return (sums)
 } 
 
-cl <- makeCluster(3)
-clusterExport(cl, "SS")
+clusterExport(cl, "SUM")
 
-system.time({
-  SapSum <- parSapply(cl, 1:length(y), function(y) SS)
+t4 <- system.time({
+  SapSum <- parSapply(cl, 1:length(y), function(y) SUM)
 })
 
 stopCluster(cl)
 
+t1 <- t1[1:3]
+t2 <- t2[1:3]
+t3 <- t3[1:3]
+t4 <- t4[1:3]
+
+timedf <- data.frame(rbind(t1,t2,t3,t4))
+colnames(timedf) <- c("User", "System", "Elapsed")
+rownames(timedf) <- c("For", "Vector ops", "Dopar", "parSapply" )
+kable(timedf)
+
+
 ```
 
-3. 
+I see that overall, the For, vector operations and parSapply take the least amount of time, where Dopar take an unusual amount of time to run. 
+
+My final sums of squares is 9996. With n = 10000. 
+
+## 3. Gradient Descent
+
+```{r echo = F}
+
+#3 Gradient Descent
+
+# what to parallelize here? What parameters do you NEED to specify
+
+# compare to lm(h~0+x)
+
+# Original results
+
+set.seed(1256)
+theta <- as.matrix(c(1,2), nrow = 2)
+x <- cbind(1, rep(1:10, 10))
+
+alpha <- 0.0001
+tolerance <- 0.000001
+
+# Theta new is theta i 
+# Theta current is theta i - 1
+# Alpha doesnt change, and tolerance are set
+# h is devised from x and theta, m comes from h
+# Theta current and theta
+
+getGradient <- function(xvec, thetamat) {
+  # This function takes in an xvec and theta matrix
+  # It calculates the coefficients in a regression model
+  
+  set.seed(1256)
+  
+  thetacurrent <- as.matrix(c(0,0), nrow = 2)
+  thetanew <- as.matrix(c(1,1), nrow = 2)
+  h <- xvec %*% thetamat + rnorm(100, 0, 0.2)
+  m <- length(h)
+  tx <- t(xvec)
+  
+  
+  t5 <- system.time({
+    while(sum(abs(thetanew - thetacurrent) > tolerance)) {
+      thetacurrent <- thetanew
+      thetagrad <- tx %*% ((x %*% thetacurrent) - h)
+      thetanew <- thetacurrent - alpha/m * thetagrad
+    }
+  })
+  
+  mydf <- data.frame(thetacurrent, thetanew)
+  rownames(mydf) <- c("Theta0", "Theta1")
+  colnames(mydf) <- c("Thetacurrent", "Thetanew")
+  
+  return (mydf)
+}
+
+grad <- getGradient(x, theta)
+
+# now to parallelize this function
+
+
+registerDoParallel(3)
+cl <- makeCluster(3)
+
+clusterExport(cl, "getGradient")
+
+parattempt <- parSapply(cl, function(x, theta) getGradient, getGradient)
+
+stopCluster(cl)
+
+lmfit <- lm(h~0+x)
+
+
+```
+
+So I wasn't able to get the parSapply or parLapply to work with a function. However, I was able to make a getGradient function that only needs an x matrix and theta matrix to calculate the gradient (coefficients) for the linear model. I wanted to parallelize this by creating the function and by using the parallel function parSapply to parallelize the function and make it faster.
+
+## 4. Bootstrapped regression 
+
+```{r echo = F}
+#4a. Bootstrapped regression
+
+B = 10000
+
+bootbeta <- matrix(NA, ncol = 5, nrow = 10000)
+
+Boottime <- list()
+
+set.seed(1267)
+n <- 200
+X <- 1/cbind(1, rt(n, df = 1), rt(n, df = 1), rt(n, df = 1))
+beta <- c(1,2,3,0)
+Y <- X %*% beta + rnorm(100, sd = 3)
+
+cl <- makeCluster(3)
+registerDoParallel(cl)
+registerDoRNG()
+set.seed(1267)
+
+t6 <- system.time({Boottime <- foreach(b = 1:B, .combine = "rbind") %dorng% {
+  bootid <- sample(1:length(Y), length(Y), replace = TRUE)
+  bootx <- X[bootid, ]
+  booty <- Y[bootid, ]
+  return (bootbeta <- coef(lm(booty~bootx)))
+}
+})
+
+stopCluster(cl)
+
+# since considering beta1, use index 2
+
+# This above function works now but only because I didn't have extra parentheses
+
+# I did Booty ~ 0 + bootX in order to remove the list of 1's
+
+```
+
+a. I used the base package of R to generate my random data
+
+## Appendix
+
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60), }
+
+```
