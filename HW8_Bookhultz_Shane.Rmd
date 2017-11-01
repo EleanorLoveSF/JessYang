@@ -1,0 +1,192 @@
+---
+title: "STAT 5014 HW8"
+output: html_notebook
+---
+
+```{r echo = F}
+
+# libraries needed for this lab
+
+library(tidyr)
+library(tidytext)
+library(dplyr)
+library(wordcloud)
+library(ggplot2)
+
+```
+
+1. I already have a github repository at github.com/sdbookhu/STAT5014Repo
+
+
+2. 
+```{r echo = F}
+
+surveyfile <- read.table("C:/Users/USER/Documents/Fall 2017 Stats/STAT5014/STAT_5014_homework/08_text_mining_Rnotebooks_bash_sed_awk/survey_data.txt", sep = "\t", header = T)
+
+# text <- as.vector(surveyfile[,1])
+
+# clean the character string
+textdf <- surveyfile
+
+# Mainly the first column
+
+textdf <- apply(textdf, 2, tolower)
+textdf <- apply(textdf, 2, function(y) gsub("/", " ", y))
+textdf <- apply(textdf, 2, function(y) gsub("math-bs", "math", y))
+textdf <- apply(textdf, 2, function(y) gsub("finance-bs", "finance", y))
+textdf <- apply(textdf, 2, function(y) gsub("finance-ms", "", y))
+textdf <- apply(textdf, 2, function(y) gsub(",", " ", y))
+textdf <- apply(textdf, 2, function(y) gsub("math(stat)-bs", "math stat", y))
+
+# Second column
+
+textdf <- apply(textdf, 2, function(y) gsub("pc-surface", "pc", y))
+
+text <- as.vector(textdf)
+text <- trimws(text)
+bigtextstr <- strsplit(text, split = " ")
+
+textvec <- unlist(bigtextstr)
+
+
+
+
+text_df <- data_frame(line = 1:length(textvec), text = textvec)
+
+
+newtextdf <- text_df %>% unnest_tokens(word, text, to_lower = TRUE)
+
+# Time to clean the data
+
+countingwords <- newtextdf %>% count(word, sort = T)
+
+newtextdf %>% anti_join(stop_words) %>% count(word) %>% with(wordcloud(word, n))
+```
+
+According to the word cloud above, it seems like we have mostly math and stat majors in the class, and the top operating system overall is PC OS. Additionally, the most common programming language seems to be SAS, Python, Matlab, and java. Lastly, it seems like the class is evenly divided into beginner programmers and intermediate programmers. 
+
+3.
+
+```{r echo = F}
+#3 case study
+
+# Make up a new case study of my own
+
+# Find my own data? 
+
+Psydata <- read.csv("C:/Users/USER/Documents/YouTube-Spam-Collection-v1/Youtube01-Psy.csv")
+Katyperrydata <- read.csv("C:/Users/USER/Documents/YouTube-Spam-Collection-v1/Youtube02-KatyPerry.csv")
+LMFAOdata <- read.csv("C:/Users/USER/Documents/YouTube-Spam-Collection-v1/Youtube03-LMFAO.csv")
+Eminemdata <- read.csv("C:/Users/USER/Documents/YouTube-Spam-Collection-v1/Youtube04-Eminem.csv")
+Shakiradata <- read.csv("C:/Users/USER/Documents/YouTube-Spam-Collection-v1/Youtube05-Shakira.csv")
+
+# Convert each dataset into a smaller one with only the comment itself
+
+# Seperate into 2 datasets each, one spam, one not spam
+
+spam.psydata <- filter(Psydata, Psydata$CLASS == 1)
+nonspam.psydata <- filter(Psydata, Psydata$CLASS == 0)
+
+spam.kpdata <- filter(Katyperrydata, Katyperrydata$CLASS == 1)
+nonspam.kpdata <- filter(Katyperrydata, Katyperrydata$CLASS == 0)
+
+spam.lmfaodata <- filter(LMFAOdata, LMFAOdata$CLASS == 1)
+nonspam.lmfaodata <- filter(LMFAOdata, LMFAOdata$CLASS == 0)
+
+spam.emdata <- filter(Eminemdata, Eminemdata$CLASS == 1)
+nonspam.emdata <- filter(Eminemdata, Eminemdata$CLASS == 0)
+
+spam.shadata <- filter(Shakiradata, Shakiradata$CLASS == 1)
+nonspam.shadata <- filter(Shakiradata, Shakiradata$CLASS == 0)
+
+# Now convert the content into a character vector
+
+spam.psyvec <- as.vector(spam.psydata[,'CONTENT'])
+nonspam.psyvec <- as.vector(nonspam.psydata[,'CONTENT'])
+
+spam.kpvec <- as.vector(spam.kpdata[,'CONTENT'])
+nonspam.kpvec <- as.vector(nonspam.kpdata[,'CONTENT'])
+
+spam.lmfaovec <- as.vector(spam.lmfaodata[,'CONTENT'])
+nonspam.lmfaovec <- as.vector(nonspam.lmfaodata[,'CONTENT'])
+
+spam.emvec <- as.vector(spam.emdata[,'CONTENT'])
+nonspam.emvec <- as.vector(nonspam.emdata[,'CONTENT'])
+
+spam.shavec <- as.vector(spam.shadata[,'CONTENT'])
+nonspam.shavec <- as.vector(nonspam.shadata[,'CONTENT'])
+
+# Now convert vector into a dataframe detailing the line and text
+
+spam.psytextdf <- data_frame(line = 1:length(spam.psyvec), text = spam.psyvec)
+nonspam.psytextdf <- data_frame(line = 1:length(nonspam.psyvec), text = nonspam.psyvec)
+
+spam.kptextdf <- data_frame(line = 1:length(spam.kpvec), text = spam.kpvec)
+nonspam.kptextdf <- data_frame(line = 1:length(nonspam.kpvec), text = nonspam.kpvec)
+
+spam.lmfaotextdf <- data_frame(line = 1:length(spam.lmfaovec), text = spam.lmfaovec)
+nonspam.lmfaotextdf <- data_frame(line = 1:length(nonspam.lmfaovec), text = nonspam.lmfaovec)
+
+spam.emtextdf <- data_frame(line = 1:length(spam.emvec), text = spam.emvec)
+nonspam.emtextdf <- data_frame(line = 1:length(nonspam.emvec), text = nonspam.emvec)
+
+spam.shatextdf <- data_frame(line = 1:length(spam.shavec), text = spam.shavec)
+nonspam.shatextdf <- data_frame(line = 1:length(nonspam.shavec), text = nonspam.shavec)
+
+# Now that I have each text df, convert into a longer df with only words
+
+spam.ex.psydf <- spam.psytextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+nonspam.ex.psydf <- nonspam.psytextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+
+spam.ex.kpdf <- spam.kptextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+nonspam.ex.kpdf <- nonspam.kptextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+
+spam.ex.lmfaodf <- spam.lmfaotextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+nonspam.ex.lmfaodf <- nonspam.lmfaotextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+
+spam.ex.emdf <- spam.emtextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+nonspam.ex.emdf <- nonspam.emtextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+
+spam.ex.shadf <- spam.shatextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+nonspam.ex.shadf <- nonspam.shatextdf %>% unnest_tokens(word, text) %>% anti_join(stop_words)
+
+# Make a conjoined dataset of all the spam set and all the nonspam set
+
+spam.totaldf <- rbind(spam.ex.emdf, spam.ex.kpdf, spam.ex.lmfaodf, spam.ex.psydf, spam.ex.shadf)
+
+nonspam.totaldf <- rbind(nonspam.ex.emdf, nonspam.ex.kpdf, nonspam.ex.lmfaodf, nonspam.ex.psydf, nonspam.ex.shadf)
+
+# Now time to make visuals out of the words
+
+# spam.ex.psydf %>% count(word, sort = T) %>% filter(n > 15) %>% mutate(word =reorder(word, n)) %>% ggplot(aes(word, n)) + geom_col() + xlab(NULL) + coord_flip()
+
+spam.totaldf %>% count(word, sort = T) %>% filter(n > 100) %>% mutate(word =reorder(word, n)) %>% ggplot(aes(word, n)) + geom_col() + xlab(NULL) + coord_flip()
+
+nonspam.totaldf %>% count(word, sort = T) %>% filter(n > 50) %>% mutate(word =reorder(word, n)) %>% ggplot(aes(word, n)) + geom_col() + xlab(NULL) + coord_flip()
+
+# from these analyses, it seems like spam comments include check, video, subscribe, 39, br and channel. Br includes something from html so it may be easy to see why this is spam
+
+# from regular comments, it seems like people love these songs
+
+# Now do a word cloud
+
+spam.totaldf %>% count(word) %>% with(wordcloud(word, n, max.words = 50))
+
+nonspam.totaldf %>% count(word) %>% with(wordcloud(word, n, max.words = 50))
+```
+
+This dataset that I am text-mining is a youtube spam comment collection used for spam research, data obtained from the UCI Machine Learning Repository. There are 5 total video datasets, Psy, Katy Perry, LMFAO, Eminem, and Shakira. There are 5 variables, comment_id (bunch of letters and numbers), youtube author, date of the comment, the comment itself, and a class variable used to determine if a comment is spam or not. 
+
+I will conduct analysis to see the most common words used in a spam message compared to the most common words used in a regular message. Also I will compute this number overall and in each dataset. Perhaps in the future I could look at the date of each comment and see which words are prevalent. 
+
+I seperated each set into spam and nonspam comments, then overall gather each set into 2 total sets, one with spam comments, and one with nonspam comments. Then I created bar charts out of each and word clouds out of each. 
+
+In the plots above, the first plots are in the spam words, and the second are the nonspam word comments. Overall, it seems spam comments use $\hat{a}$ and i often which I believe are used in links, so spam comments most likely will contain a link in them. Additionally, words like "check", "video", and "subscribe" are used next frequently, which means that most often these spam comments are trying to draw attention away from the current video and asking for more views on their channel. In the nonspam comments, the top "word" is i with 2 dots, which again I believe are for links. The next frequent words are song and love, which I believe tells that the nonspam commenters love the video and love the song. Overall, spam commenters are trying to draw attention to their channel and nonspam commenters are just trying to say how much they like the video.
+
+4. I created an ARC account but can't log on. 
+
+## Appendix
+
+```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60), }
+
+```
