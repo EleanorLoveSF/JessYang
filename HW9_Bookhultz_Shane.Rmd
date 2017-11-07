@@ -1,0 +1,85 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Shane Bookhultz HW9
+
+# Problem 1
+
+I have a repo online,
+https://github.com/sdbookhu/STAT5014Repo
+
+# Problem 2
+
+https://github.com/amueller/word_cloud/tree/master/examples
+
+I am duplicating work from this website above, using the Alice example. 
+
+```{python engine.path = "C:/Users/USER/Anaconda3/python"}
+ 
+import numpy
+
+#!/usr/bin/env python
+"""
+Masked wordcloud
+================
+Using a mask you can generate wordclouds in arbitrary shapes.
+"""
+
+from os import path
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+
+from wordcloud import WordCloud, STOPWORDS
+
+#######################
+# I commented out the d file name since I downloaded the picture and text file
+########################
+#d = path.dirname(__file__)
+
+# Read the whole text.
+text = open('alice.txt').read()
+
+# read the mask image
+# taken from
+# http://www.stencilry.org/stencils/movies/alice%20in%20wonderland/255fk.jpg
+
+# This is opening the picture and taking the vertices of the picture and putting it into a numpy array
+alice_mask = np.array(Image.open("alice_color.png"))
+
+stopwords = set(STOPWORDS)
+stopwords.add("said")
+
+
+# This wordcloud statement creates the word cloud, with the most important variable taking in being Alice mask
+
+# This Alice mask takes the outline of the mask and puts all the words inside it
+
+wc = WordCloud(background_color="white", max_words=2000, mask=alice_mask,
+               stopwords=stopwords)
+# generate word cloud
+wc.generate(text)
+
+# store to file
+wc.to_file("alice.png")
+
+# show
+#plt.imshow(wc, interpolation='bilinear')
+#plt.axis("off")
+#plt.figure()
+#plt.imshow(alice_mask, cmap=plt.cm.gray, interpolation='bilinear')
+#plt.axis("off")
+#plt.show()
+
+```
+
+Above is the text that creates the wordcloud. Down below is the Alice wordcloud. 
+
+
+```{r echo = F}
+
+knitr::include_graphics("alice.png")
+
+```

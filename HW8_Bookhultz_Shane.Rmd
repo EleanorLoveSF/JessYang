@@ -188,5 +188,5 @@ In the plots above, the first plots are in the spam words, and the second are th
 ## Appendix
 
 ```{r, ref.label=knitr::all_labels(),echo=TRUE,eval=FALSE, tidy=TRUE, tidy.opts=list(width.cutoff=60), }
-
+ 
 ```
